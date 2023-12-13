@@ -1,41 +1,60 @@
 package org.backoffice.service.socketcliente;
 
 import org.backoffice.domains.enums.ports.ServerPort;
+import org.backoffice.service.socketserver.SocketServer;
 
+import java.io.DataOutputStream;
 import java.io.IOException;
-import java.io.PrintWriter;
 import java.net.Socket;
+import java.util.Scanner;
 
 import static org.backoffice.service.socketserver.SocketServer.SERVER_ADDRESS;
 
-public final class SocketClient implements Runnable
+public final class SocketClient
 {
-    private final ServerPort serverPortNumber;
-    private final String message;
-    public SocketClient(ServerPort serverPortNumber, String message) {
-        this.serverPortNumber = serverPortNumber;
-        this.message = message;
-    }
+    private String clientId;
+    private Socket clientSocket;
+    private DataOutputStream out;
+    private Scanner in;
 
-    public void clientTest()
+    public SocketClient(ServerPort serverPortNumber, String clientId)
     {
         try
         {
-            Socket socket = new Socket(SERVER_ADDRESS, serverPortNumber.getPortNumber());
-            System.out.println(Thread.currentThread().getName() + " Connected to server: " + socket.getInetAddress());
-            PrintWriter out = new PrintWriter(socket.getOutputStream(), true);
-            out.println(message);
-            out.close();
-            socket.close();
+            this.clientId = "[ "+ clientId + " ] ";
+            clientSocket = new Socket(SERVER_ADDRESS, serverPortNumber.getPortNumber());
+            out = new DataOutputStream(clientSocket.getOutputStream());
+            in = new Scanner(System.in);
+            writeMessage();
+            closeClientSocket();
         }
         catch (IOException e)
         {
-            throw new RuntimeException(e);
+            System.out.println(e.getMessage());
         }
     }
 
-    @Override
-    public void run() {
-        clientTest();
+    private void writeMessage()
+    {
+        try
+        {
+            while (true)
+            {
+                final String line = in.nextLine();
+                if(line.equals(SocketServer.STOP_COMMUNICATION)) return;
+                out.writeUTF(clientId + line);
+            }
+        }
+        catch (IOException e)
+        {
+            System.out.println(e.getMessage());
+        }
+    }
+
+    private void closeClientSocket() throws IOException
+    {
+        clientSocket.close();
+        in.close();
+        out.close();
     }
 }

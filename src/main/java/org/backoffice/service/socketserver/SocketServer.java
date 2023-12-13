@@ -2,49 +2,37 @@ package org.backoffice.service.socketserver;
 
 import org.backoffice.domains.enums.ports.ServerPort;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
+import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;
 
-public final class SocketServer implements Runnable
+public final class SocketServer
 {
-    public static final String SERVER_ADDRESS = "localhost";
-    private final ServerPort serverPortNumber;
+    public static final String SERVER_ADDRESS = "127.0.0.1";
+    public static final String STOP_COMMUNICATION = "##";
 
-    public SocketServer(ServerPort serverPortNumber) {
-        this.serverPortNumber = serverPortNumber;
+    public SocketServer(ServerPort serverPortNumber)
+    {
+        initialize(serverPortNumber);
     }
 
-    public void serverTest()
+    private void initialize(ServerPort serverPortNumber)
     {
         try
         {
-            ServerSocket serverSocket = new ServerSocket(serverPortNumber.getPortNumber());
-            Socket clientSocket = serverSocket.accept();
-            System.out.println("Client connected: " + clientSocket.getInetAddress());
-            BufferedReader in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
-            String clientMessage;
-
-            while ((clientMessage = in.readLine()) != null)
+            try (ServerSocket serverSocket = new ServerSocket(serverPortNumber.getPortNumber()))
             {
-                System.out.println("Received from client: " + clientMessage);
+                do
+                {
+                    Socket clientSocket = serverSocket.accept();
+                    new Handler(clientSocket).start();
+                }
+                while (true);
             }
-
-            System.out.println("Client disconnected: " + clientSocket.getInetAddress());
-            in.close();
-            clientSocket.close();
-            serverSocket.close();
         }
         catch (IOException e)
         {
             throw new RuntimeException(e);
         }
-    }
-
-    @Override
-    public void run() {
-        serverTest();
     }
 }
