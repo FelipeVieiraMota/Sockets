@@ -1,6 +1,6 @@
 package org.backoffice.service.socketserver;
 
-import org.backoffice.domains.enums.ports.Port;
+import org.backoffice.domains.enums.ports.ServerPort;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -11,17 +11,17 @@ import java.net.Socket;
 public final class SocketServer implements Runnable
 {
     public static final String SERVER_ADDRESS = "localhost";
-    private final Port portNumber;
+    private final ServerPort serverPortNumber;
 
-    public SocketServer(Port portNumber) {
-        this.portNumber = portNumber;
+    public SocketServer(ServerPort serverPortNumber) {
+        this.serverPortNumber = serverPortNumber;
     }
 
     public void serverTest()
     {
         try
         {
-            ServerSocket serverSocket = new ServerSocket(portNumber.getPortNumber());
+            ServerSocket serverSocket = new ServerSocket(serverPortNumber.getPortNumber());
             Socket clientSocket = serverSocket.accept();
             System.out.println("Client connected: " + clientSocket.getInetAddress());
             BufferedReader in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));

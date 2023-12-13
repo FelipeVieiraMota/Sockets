@@ -1,6 +1,6 @@
 package org.backoffice.service.socketcliente;
 
-import org.backoffice.domains.enums.ports.Port;
+import org.backoffice.domains.enums.ports.ServerPort;
 
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -10,10 +10,10 @@ import static org.backoffice.service.socketserver.SocketServer.SERVER_ADDRESS;
 
 public final class SocketClient implements Runnable
 {
-    private final Port portNumber;
+    private final ServerPort serverPortNumber;
     private final String message;
-    public SocketClient(Port portNumber, String message) {
-        this.portNumber = portNumber;
+    public SocketClient(ServerPort serverPortNumber, String message) {
+        this.serverPortNumber = serverPortNumber;
         this.message = message;
     }
 
@@ -21,7 +21,7 @@ public final class SocketClient implements Runnable
     {
         try
         {
-            Socket socket = new Socket(SERVER_ADDRESS, portNumber.getPortNumber());
+            Socket socket = new Socket(SERVER_ADDRESS, serverPortNumber.getPortNumber());
             System.out.println(Thread.currentThread().getName() + " Connected to server: " + socket.getInetAddress());
             PrintWriter out = new PrintWriter(socket.getOutputStream(), true);
             out.println(message);
