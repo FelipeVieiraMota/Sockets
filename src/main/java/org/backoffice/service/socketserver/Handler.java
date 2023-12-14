@@ -1,5 +1,7 @@
 package org.backoffice.service.socketserver;
 
+import org.backoffice.domains.enums.commands.ServerCommands;
+
 import java.io.BufferedInputStream;
 import java.io.DataInputStream;
 import java.io.IOException;
@@ -17,14 +19,16 @@ public class Handler extends Thread
     @Override
     public void run()
     {
+        execute();
+    }
+
+    private void execute()
+    {
         try
         {
-            // Set up input stream to read data from the client
             in = new DataInputStream(new BufferedInputStream(clientSocket.getInputStream()));
-
-            // Read data from the client and send a response
             String clientMessage = "";
-            while (!clientMessage.equals(SocketServer.STOP_COMMUNICATION))
+            while (!clientMessage.equals(ServerCommands.STOP_COMMUNICATION.getCommand()))
             {
                 clientMessage = in.readUTF();
                 System.out.println(clientMessage);

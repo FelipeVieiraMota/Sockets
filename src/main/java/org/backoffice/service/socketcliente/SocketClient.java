@@ -1,5 +1,6 @@
 package org.backoffice.service.socketcliente;
 
+import org.backoffice.domains.enums.commands.ServerCommands;
 import org.backoffice.domains.enums.ports.ServerPort;
 import org.backoffice.service.socketserver.SocketServer;
 
@@ -41,7 +42,7 @@ public final class SocketClient
             while (true)
             {
                 final String line = in.nextLine();
-                if(line.equals(SocketServer.STOP_COMMUNICATION)) return;
+                if(line.equals(ServerCommands.STOP_COMMUNICATION.getCommand())) return;
                 out.writeUTF(clientId + line);
             }
         }
