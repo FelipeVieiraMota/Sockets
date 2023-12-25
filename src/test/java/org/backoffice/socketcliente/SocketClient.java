@@ -1,4 +1,4 @@
-package org.backoffice.service.socketcliente;
+package org.backoffice.socketcliente;
 
 import org.backoffice.domains.enums.commands.ServerCommands;
 import org.backoffice.domains.enums.ports.ServerPort;

@@ -1,7 +1,7 @@
 package org.backoffice;
 
 import org.backoffice.domains.enums.ports.ServerPort;
-import org.backoffice.service.socketcliente.SocketClient;
+import org.backoffice.socketcliente.SocketClient;
 
 public class Client1Test
 {

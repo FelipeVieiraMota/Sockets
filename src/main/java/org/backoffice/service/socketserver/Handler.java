@@ -7,9 +7,8 @@ import java.io.DataInputStream;
 import java.io.IOException;
 import java.net.Socket;
 
-public class Handler extends Thread
+public class Handler implements Runnable
 {
-    private DataInputStream in;
     private final Socket clientSocket;
 
     public Handler(Socket socket) {
@@ -26,24 +25,19 @@ public class Handler extends Thread
     {
         try
         {
-            in = new DataInputStream(new BufferedInputStream(clientSocket.getInputStream()));
-            String clientMessage = "";
+            var in = new DataInputStream(new BufferedInputStream(clientSocket.getInputStream()));
+            var clientMessage = "";
             while (!clientMessage.equals(ServerCommands.STOP_COMMUNICATION.getCommand()))
             {
                 clientMessage = in.readUTF();
                 System.out.println(clientMessage);
             }
-
-            close();
+            in.close();
+            clientSocket.close();
         }
         catch (IOException e)
         {
-            e.printStackTrace();
+            System.out.println(e.getMessage());
         }
-    }
-
-    private void close() throws IOException {
-        in.close();
-        clientSocket.close();
     }
 }
